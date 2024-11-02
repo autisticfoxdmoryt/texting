@@ -4,48 +4,157 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Minecraft Food</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        #sidebar {
+            width: 30%;
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-right: 1px solid #ddd;
+            overflow-y: auto;
+            height: 100vh;
+        }
+        #main {
+            width: 70%;
+            padding: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        label, input, select, button {
+            display: block;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .order-item {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+        .timestamp {
+            font-size: 0.8em;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-    <h1>Order Minecraft Food</h1>
 
-    <label for="food">Choose a food item:</label>
-    <select id="food">
-        <option value="Apple">Apple</option>
-        <option value="Bread">Bread</option>
-        <option value="Cooked Beef">Cooked Beef</option>
-        <option value="Cooked Chicken">Cooked Chicken</option>
-        <option value="Carrot">Carrot</option>
-        <option value="Potato">Potato</option>
-        <option value="Cooked Porkchop">Cooked Porkchop</option>
-        <option value="Pumpkin Pie">Pumpkin Pie</option>
-        <option value="Mushroom Stew">Mushroom Stew</option>
-        <option value="Golden Apple">Golden Apple</option>
-        <option value="Cake">Cake</option>
-    </select>
+    <!-- Sidebar for order history -->
+    <div id="sidebar">
+        <h2>Order History</h2>
+        <div id="orderHistory">No orders yet.</div>
+    </div>
 
-    <label for="quantity">Quantity:</label>
-    <select id="quantity">
-        <script>
-            for (let i = 1; i <= 64; i++) {
-                document.write(`<option value="${i}">${i}</option>`);
-            }
-        </script>
-    </select>
+    <!-- Main order form -->
+    <div id="main">
+        <h1>Order Minecraft Food</h1>
+        
+        <label for="name">Your Name:</label>
+        <input type="text" id="name" placeholder="Enter your name" required>
 
-    <button onclick="placeOrder()">Place Order</button>
+        <label for="food">Choose a food item:</label>
+        <select id="food">
+            <option value="Apple">Apple</option>
+            <option value="Bread">Bread</option>
+            <option value="Cooked Beef">Cooked Beef</option>
+            <option value="Cooked Chicken">Cooked Chicken</option>
+            <option value="Carrot">Carrot</option>
+            <option value="Potato">Potato</option>
+            <option value="Cooked Porkchop">Cooked Porkchop</option>
+            <option value="Pumpkin Pie">Pumpkin Pie</option>
+            <option value="Mushroom Stew">Mushroom Stew</option>
+            <option value="Golden Apple">Golden Apple</option>
+            <option value="Cake">Cake</option>
+        </select>
+
+        <label for="quantity">Quantity:</label>
+        <select id="quantity">
+            <script>
+                for (let i = 1; i <= 64; i++) {
+                    document.write(`<option value="${i}">${i}</option>`);
+                }
+            </script>
+        </select>
+
+        <button onclick="placeOrder()">Place Order</button>
+    </div>
 
     <script>
+        // Function to save order and update order history
         function placeOrder() {
+            const name = document.getElementById('name').value;
             const food = document.getElementById('food').value;
             const quantity = document.getElementById('quantity').value;
-            
-            // Save order details to localStorage
-            const order = { food, quantity };
-            localStorage.setItem('currentOrder', JSON.stringify(order));
-            
-            // Navigate to the receive page
-            window.location.href = 'receive.html';
+            const timestamp = new Date().toLocaleString();
+
+            if (!name) {
+                alert('Please enter your name');
+                return;
+            }
+
+            // Create order object
+            const order = { name, food, quantity, timestamp };
+
+            // Retrieve existing orders from localStorage, add new order, and save back
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            orders.push(order);
+            localStorage.setItem('orders', JSON.stringify(orders));
+
+            // Update the sidebar with the latest order history
+            updateOrderHistory();
         }
+
+        // Function to display the order history
+        function updateOrderHistory() {
+            const orderHistoryDiv = document.getElementById('orderHistory');
+            const orders = JSON.parse(localStorage.getItem('orders')) || [];
+            
+            // Clear existing content
+            orderHistoryDiv.innerHTML = '';
+
+            // Populate order history
+            if (orders.length === 0) {
+                orderHistoryDiv.textContent = 'No orders yet.';
+            } else {
+                orders.forEach(order => {
+                    const orderDiv = document.createElement('div');
+                    orderDiv.className = 'order-item';
+                    orderDiv.innerHTML = `
+                        <strong>${order.name}</strong> ordered ${order.quantity} x ${order.food}<br>
+                        <span class="timestamp">${timeAgo(new Date(order.timestamp))}</span>
+                    `;
+                    orderHistoryDiv.appendChild(orderDiv);
+                });
+            }
+        }
+
+        // Helper function to calculate relative time (e.g., "2 minutes ago")
+        function timeAgo(date) {
+            const now = new Date();
+            const secondsAgo = Math.floor((now - date) / 1000);
+            const minutesAgo = Math.floor(secondsAgo / 60);
+            const hoursAgo = Math.floor(minutesAgo / 60);
+
+            if (secondsAgo < 60) return `${secondsAgo} seconds ago`;
+            if (minutesAgo < 60) return `${minutesAgo} minutes ago`;
+            return `${hoursAgo} hours ago`;
+        }
+
+        // Load order history when the page loads
+        window.onload = updateOrderHistory;
     </script>
 </body>
 </html>
