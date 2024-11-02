@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+</head>
+<body>
+    <h1>Your Order</h1>
+    
+    <p>Food Item: <span id="foodItem"></span></p>
+    <p>Quantity: <span id="quantityItem"></span></p>
+
+    <script>
+        // Retrieve the food item and quantity from URL parameters
+        const params = new URLSearchParams(window.location.search);
+        const food = params.get('food');
+        const quantity = params.get('quantity');
+
+        // Display the order details
+        document.getElementById('foodItem').textContent = food || 'N/A';
+        document.getElementById('quantityItem').textContent = quantity || 'N/A';
+    </script>
+</body>
+</html>
