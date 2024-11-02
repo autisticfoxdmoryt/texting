@@ -3,32 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Received</title>
+    <title>Order Receipt</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        h1 { color: #333; }
+        .order { margin-top: 20px; padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9; }
+    </style>
 </head>
 <body>
-    <h1>Order Received</h1>
-    
-    <p>Food Item: <span id="foodItem">Loading...</span></p>
-    <p>Quantity: <span id="quantityItem">Loading...</span></p>
+    <h1>Received Orders</h1>
+    <div id="orderDisplay" class="order">Loading...</div>
 
     <script>
+        function getQueryParams() {
+            const params = {};
+            const queryString = window.location.search.substring(1);
+            const queries = queryString.split("&");
+            queries.forEach(query => {
+                const [key, value] = query.split("=");
+                params[decodeURIComponent(key)] = decodeURIComponent(value);
+            });
+            return params;
+        }
+
         function displayOrder() {
-            const order = JSON.parse(localStorage.getItem('currentOrder'));
-            if (order) {
-                document.getElementById('foodItem').textContent = order.food;
-                document.getElementById('quantityItem').textContent = order.quantity;
+            const params = getQueryParams();
+            if (params.name && params.food && params.quantity) {
+                document.getElementById('orderDisplay').innerHTML = `
+                    <strong>Name:</strong> ${params.name} <br>
+                    <strong>Food:</strong> ${params.food} <br>
+                    <strong>Quantity:</strong> ${params.quantity}
+                `;
+            } else {
+                document.getElementById('orderDisplay').textContent = "No order found.";
             }
         }
 
-        // Initial display of the order
-        displayOrder();
-
-        // Listen for storage changes to update the order in real-time
-        window.addEventListener('storage', (event) => {
-            if (event.key === 'currentOrder') {
-                displayOrder();
-            }
-        });
+        window.onload = displayOrder;
     </script>
 </body>
 </html>
