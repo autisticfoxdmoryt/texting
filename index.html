@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Texting Web App</title>
+    <title>Simple Texting Web App with Username</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,6 +22,27 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+        }
+        #username-setup {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            gap: 10px;
+        }
+        #username-setup input {
+            padding: 8px;
+            width: 80%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        #username-setup button {
+            padding: 8px 12px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
         }
         #messages {
             padding: 10px;
@@ -74,22 +95,40 @@
 </head>
 <body>
     <div id="app">
-        <div id="messages"></div>
-        <div id="input-area">
+        <div id="username-setup">
+            <input type="text" id="username-input" placeholder="Enter your username">
+            <button onclick="setUsername()">Start Chatting</button>
+        </div>
+        <div id="messages" style="display: none;"></div>
+        <div id="input-area" style="display: none;">
             <input type="text" id="message-input" placeholder="Type a message...">
             <button onclick="sendMessage()">Send</button>
         </div>
     </div>
 
     <script>
+        let username = '';
+
+        function setUsername() {
+            const usernameInput = document.getElementById('username-input').value.trim();
+            if (usernameInput) {
+                username = usernameInput;
+                document.getElementById('username-setup').style.display = 'none';
+                document.getElementById('messages').style.display = 'flex';
+                document.getElementById('input-area').style.display = 'flex';
+            } else {
+                alert('Please enter a valid username.');
+            }
+        }
+
         function sendMessage() {
             const input = document.getElementById('message-input');
             const messageText = input.value.trim();
             if (messageText) {
-                displayMessage(messageText, 'sent');
+                displayMessage(`${username}: ${messageText}`, 'sent');
                 input.value = '';
                 setTimeout(() => {
-                    displayMessage('This is a reply message.', 'received');
+                    displayMessage('Bot: This is a reply message.', 'received');
                 }, 1000);
             }
         }
