@@ -7,35 +7,45 @@
 </head>
 <body>
     <h1>Order Minecraft Food</h1>
-    
-    <form id="orderForm" action="/receive" method="get">
-        <label for="food">Choose a food item:</label>
-        <select id="food" name="food">
-            <option value="Apple">Apple</option>
-            <option value="Bread">Bread</option>
-            <option value="Cooked Beef">Cooked Beef</option>
-            <option value="Cooked Chicken">Cooked Chicken</option>
-            <option value="Carrot">Carrot</option>
-            <option value="Potato">Potato</option>
-            <option value="Cooked Porkchop">Cooked Porkchop</option>
-            <option value="Pumpkin Pie">Pumpkin Pie</option>
-            <option value="Mushroom Stew">Mushroom Stew</option>
-            <option value="Golden Apple">Golden Apple</option>
-            <option value="Cake">Cake</option>
-            <!-- Add more items as needed -->
-        </select>
 
-        <label for="quantity">Quantity:</label>
-        <select id="quantity" name="quantity">
-            <!-- Options from 1 to 64 -->
-            <script>
-                for (let i = 1; i <= 64; i++) {
-                    document.write(`<option value="${i}">${i}</option>`);
-                }
-            </script>
-        </select>
+    <label for="food">Choose a food item:</label>
+    <select id="food">
+        <option value="Apple">Apple</option>
+        <option value="Bread">Bread</option>
+        <option value="Cooked Beef">Cooked Beef</option>
+        <option value="Cooked Chicken">Cooked Chicken</option>
+        <option value="Carrot">Carrot</option>
+        <option value="Potato">Potato</option>
+        <option value="Cooked Porkchop">Cooked Porkchop</option>
+        <option value="Pumpkin Pie">Pumpkin Pie</option>
+        <option value="Mushroom Stew">Mushroom Stew</option>
+        <option value="Golden Apple">Golden Apple</option>
+        <option value="Cake">Cake</option>
+    </select>
 
-        <button type="submit">Place Order</button>
-    </form>
+    <label for="quantity">Quantity:</label>
+    <select id="quantity">
+        <script>
+            for (let i = 1; i <= 64; i++) {
+                document.write(`<option value="${i}">${i}</option>`);
+            }
+        </script>
+    </select>
+
+    <button onclick="placeOrder()">Place Order</button>
+
+    <script>
+        function placeOrder() {
+            const food = document.getElementById('food').value;
+            const quantity = document.getElementById('quantity').value;
+            
+            // Save order details to localStorage
+            const order = { food, quantity };
+            localStorage.setItem('currentOrder', JSON.stringify(order));
+            
+            // Navigate to the receive page
+            window.location.href = 'receive.html';
+        }
+    </script>
 </body>
 </html>
